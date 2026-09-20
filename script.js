@@ -13,11 +13,28 @@
   const I18N = window.I18N;
   const SUPPORTED = ["en", "vi"];
 
+  // Safe storage wrapper (localStorage is blocked in some sandboxed iframes)
+  const safeStorage = (() => {
+    let mem = {};
+    try {
+      const k = "__esia_test__";
+      window.localStorage.setItem(k, "1");
+      window.localStorage.removeItem(k);
+      return window.localStorage;
+    } catch (_) {
+      return {
+        getItem: (k) => (k in mem ? mem[k] : null),
+        setItem: (k, v) => { mem[k] = String(v); },
+        removeItem: (k) => { delete mem[k]; },
+      };
+    }
+  })();
+
   function getInitialLang() {
     const url = new URL(window.location.href);
     const q = url.searchParams.get("lang");
     if (q && SUPPORTED.includes(q)) return q;
-    const stored = localStorage.getItem("esia_lang");
+    const stored = safeStorage.getItem("esia_lang");
     if (stored && SUPPORTED.includes(stored)) return stored;
     const nav = (navigator.language || "en").toLowerCase();
     if (nav.startsWith("vi")) return "vi";
@@ -28,11 +45,13 @@
     if (!SUPPORTED.includes(lang)) lang = "en";
     document.documentElement.setAttribute("lang", lang);
     document.body.setAttribute("data-lang", lang);
-    localStorage.setItem("esia_lang", lang);
+    safeStorage.setItem("esia_lang", lang);
     if (!opts.skipUrl) {
-      const url = new URL(window.location.href);
-      url.searchParams.set("lang", lang);
-      history.replaceState(null, "", url);
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set("lang", lang);
+        history.replaceState(null, "", url);
+      } catch (_) { /* replaceState may fail in some sandboxes */ }
     }
     render(lang);
   }
@@ -220,13 +239,30 @@
     slides[next].scrollIntoView({ behavior: "smooth", block: "start" });
     setTimeout(updatePresenterCounter, 400);
   }
+  function tryFullscreen() {
+    // Fullscreen API is blocked in some sandboxed iframes; call only if available.
+    const de = document.documentElement;
+    const req = de.requestFullscreen || de.webkitRequestFullscreen || de.mozRequestFullScreen || de.msRequestFullscreen;
+    if (!req) return;
+    try {
+      const p = req.call(de);
+      if (p && typeof p.catch === "function") p.catch(() => {});
+    } catch (_) { /* ignore */ }
+  }
+  function tryExitFullscreen() {
+    const ex = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+    if (!ex) return;
+    try {
+      const isFs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
+      if (!isFs) return;
+      const p = ex.call(document);
+      if (p && typeof p.catch === "function") p.catch(() => {});
+    } catch (_) { /* ignore */ }
+  }
   function enterPresent() {
     document.body.classList.add("presenting");
     $("#presenter").setAttribute("aria-hidden", "false");
-    // Try full-screen (silently fail if user gesture missing)
-    if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(() => {});
-    }
+    tryFullscreen();
     // Snap to nearest slide
     setTimeout(() => {
       const i = currentPresenterIndex();
@@ -237,7 +273,7 @@
   function exitPresent() {
     document.body.classList.remove("presenting");
     $("#presenter").setAttribute("aria-hidden", "true");
-    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    tryExitFullscreen();
   }
   function togglePresent() {
     if (document.body.classList.contains("presenting")) exitPresent();
@@ -289,14 +325,16 @@
       scrollTimer = setTimeout(updatePresenterCounter, 100);
     }, { passive: true });
 
-    // Fullscreen change → sync
-    document.addEventListener("fullscreenchange", () => {
-      if (!document.fullscreenElement && document.body.classList.contains("presenting")) {
-        // If user pressed Esc from fullscreen, also exit present
-        document.body.classList.remove("presenting");
-        $("#presenter").setAttribute("aria-hidden", "true");
-      }
-    });
+    // Fullscreen change → sync (only if supported)
+    if ("onfullscreenchange" in document) {
+      document.addEventListener("fullscreenchange", () => {
+        const isFs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
+        if (!isFs && document.body.classList.contains("presenting")) {
+          document.body.classList.remove("presenting");
+          $("#presenter").setAttribute("aria-hidden", "true");
+        }
+      });
+    }
 
     // Auto-enter presenter mode if ?present=1
     const url = new URL(window.location.href);
