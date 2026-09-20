@@ -216,11 +216,14 @@ img, svg { display: block; max-width: 100%; }
 }
 .hero-title {
   font-family: var(--font-display); font-weight: 700;
-  font-size: clamp(60px, 11vw, 168px);
-  line-height: 0.94;
+  font-size: clamp(52px, 7.5vw, 112px);
+  line-height: 0.96;
   letter-spacing: -0.035em;
   color: var(--deep);
   margin: 24px 0 22px;
+}
+@media (max-width: 900px) {
+  .hero-title { font-size: clamp(56px, 12vw, 96px); }
 }
 .hero-tagline {
   font-family: var(--font-display); font-weight: 600;
