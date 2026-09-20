@@ -1,5 +1,5 @@
 // e-Sia · FIT Vietnam 2026 · main script
-// - i18n rendering (EN / VI) with URL + localStorage persistence
+// - i18n rendering (EN / VI), lang carried by URL query param
 // - Dynamic list rendering (services, KPIs, cases, partners, sectors, help, docs, modes)
 // - Presenter mode: 'P' toggle, keyboard nav, hides nav+footer+docs
 // - Scroll reveal via IntersectionObserver
@@ -13,29 +13,13 @@
   const I18N = window.I18N;
   const SUPPORTED = ["en", "vi"];
 
-  // Safe storage wrapper (localStorage is blocked in some sandboxed iframes)
-  const safeStorage = (() => {
-    let mem = {};
-    try {
-      const k = "__esia_test__";
-      window.localStorage.setItem(k, "1");
-      window.localStorage.removeItem(k);
-      return window.localStorage;
-    } catch (_) {
-      return {
-        getItem: (k) => (k in mem ? mem[k] : null),
-        setItem: (k, v) => { mem[k] = String(v); },
-        removeItem: (k) => { delete mem[k]; },
-      };
-    }
-  })();
+  // In-memory language state — no browser storage (URL param carries state across reloads)
+  let currentLang = "en";
 
   function getInitialLang() {
     const url = new URL(window.location.href);
     const q = url.searchParams.get("lang");
     if (q && SUPPORTED.includes(q)) return q;
-    const stored = safeStorage.getItem("esia_lang");
-    if (stored && SUPPORTED.includes(stored)) return stored;
     const nav = (navigator.language || "en").toLowerCase();
     if (nav.startsWith("vi")) return "vi";
     return "en";
@@ -43,9 +27,9 @@
 
   function setLang(lang, opts = {}) {
     if (!SUPPORTED.includes(lang)) lang = "en";
+    currentLang = lang;
     document.documentElement.setAttribute("lang", lang);
     document.body.setAttribute("data-lang", lang);
-    safeStorage.setItem("esia_lang", lang);
     if (!opts.skipUrl) {
       try {
         const url = new URL(window.location.href);
@@ -239,31 +223,11 @@
     slides[next].scrollIntoView({ behavior: "smooth", block: "start" });
     setTimeout(updatePresenterCounter, 400);
   }
-  function tryFullscreen() {
-    // Fullscreen API is blocked in some sandboxed iframes; call only if available.
-    const de = document.documentElement;
-    const req = de.requestFullscreen || de.webkitRequestFullscreen || de.mozRequestFullScreen || de.msRequestFullscreen;
-    if (!req) return;
-    try {
-      const p = req.call(de);
-      if (p && typeof p.catch === "function") p.catch(() => {});
-    } catch (_) { /* ignore */ }
-  }
-  function tryExitFullscreen() {
-    const ex = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
-    if (!ex) return;
-    try {
-      const isFs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
-      if (!isFs) return;
-      const p = ex.call(document);
-      if (p && typeof p.catch === "function") p.catch(() => {});
-    } catch (_) { /* ignore */ }
-  }
+  // Presenter mode is a CSS overlay — no fullscreen API (blocked in sandboxed iframes).
+  // On the public GitHub Pages site the overlay fills the viewport just like fullscreen.
   function enterPresent() {
     document.body.classList.add("presenting");
     $("#presenter").setAttribute("aria-hidden", "false");
-    tryFullscreen();
-    // Snap to nearest slide
     setTimeout(() => {
       const i = currentPresenterIndex();
       getPresenterSlides()[i].scrollIntoView({ behavior: "auto", block: "start" });
@@ -273,7 +237,6 @@
   function exitPresent() {
     document.body.classList.remove("presenting");
     $("#presenter").setAttribute("aria-hidden", "true");
-    tryExitFullscreen();
   }
   function togglePresent() {
     if (document.body.classList.contains("presenting")) exitPresent();
@@ -324,17 +287,6 @@
       clearTimeout(scrollTimer);
       scrollTimer = setTimeout(updatePresenterCounter, 100);
     }, { passive: true });
-
-    // Fullscreen change → sync (only if supported)
-    if ("onfullscreenchange" in document) {
-      document.addEventListener("fullscreenchange", () => {
-        const isFs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
-        if (!isFs && document.body.classList.contains("presenting")) {
-          document.body.classList.remove("presenting");
-          $("#presenter").setAttribute("aria-hidden", "true");
-        }
-      });
-    }
 
     // Auto-enter presenter mode if ?present=1
     const url = new URL(window.location.href);
