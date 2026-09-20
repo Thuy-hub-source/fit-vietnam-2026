@@ -184,6 +184,36 @@ img, svg { display: block; max-width: 100%; }
     radial-gradient(80% 60% at 0% 100%, var(--mint) 0%, transparent 60%),
     var(--bg);
 }
+.hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(32px, 6vw, 96px);
+}
+.hero-copy { min-width: 0; }
+.hero-media {
+  min-width: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.hero-media img {
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  filter: drop-shadow(0 30px 60px rgba(11,79,58,0.10));
+  animation: floatY 8s ease-in-out infinite;
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-media img { animation: none; }
+}
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-media { order: -1; margin-bottom: 8px; }
+  .hero-media img { max-width: 320px; }
+}
 .hero-title {
   font-family: var(--font-display); font-weight: 700;
   font-size: clamp(60px, 11vw, 168px);
@@ -227,6 +257,45 @@ img, svg { display: block; max-width: 100%; }
 .hero-scroll:hover { color: var(--deep); background: #fff; transform: translateY(-1px); }
 .hero-scroll svg { transition: transform .3s var(--ease-out); }
 .hero-scroll:hover svg { transform: translateY(2px); }
+
+/* ====================== METHOD BAND (editorial) ====================== */
+.band--method {
+  padding: clamp(48px, 8vh, 96px) var(--pad-x);
+  background:
+    radial-gradient(80% 100% at 20% 50%, var(--mint) 0%, transparent 65%),
+    var(--bg);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.band__inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(32px, 6vw, 88px);
+}
+.band__img {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  justify-self: center;
+  filter: drop-shadow(0 20px 50px rgba(11,79,58,0.08));
+}
+.band__cap .eyebrow { margin-bottom: 20px; }
+.band__lede {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: clamp(22px, 2.4vw, 34px);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--deep);
+  margin: 0;
+  max-width: 22ch;
+}
+@media (max-width: 900px) {
+  .band__inner { grid-template-columns: 1fr; gap: 32px; text-align: left; }
+  .band__img { max-width: 260px; }
+}
 
 /* =========================== WHAT =========================== */
 .slide--what { background: var(--surface); }
@@ -319,10 +388,11 @@ img, svg { display: block; max-width: 100%; }
 
 .case-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
 }
-@media (max-width: 700px) { .case-grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .case-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .case-grid { grid-template-columns: 1fr; } }
 
 .case {
   padding: 28px;
@@ -336,6 +406,46 @@ img, svg { display: block; max-width: 100%; }
   letter-spacing: -0.01em;
 }
 .case p { font-size: 15px; line-height: 1.5; color: var(--body); margin: 0; }
+
+/* Rich case card (with real image from Notion portfolio) */
+.case--rich {
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: transform .4s var(--ease-out), box-shadow .4s var(--ease-out);
+}
+.case--rich:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 50px -24px rgba(11, 79, 58, 0.18);
+}
+.case__media {
+  aspect-ratio: 4 / 3;
+  background: var(--mint);
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.case__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .8s var(--ease-out);
+}
+.case--rich:hover .case__media img { transform: scale(1.03); }
+.case__body {
+  padding: 26px 26px 30px;
+}
+.case__body h4 {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 18px; line-height: 1.25;
+  color: var(--deep); margin: 0 0 12px;
+  letter-spacing: -0.015em;
+}
+.case__body p {
+  font-size: 15px; line-height: 1.55; color: var(--body); margin: 0;
+}
 
 /* =========================== PARTNERS =========================== */
 .slide--partners { background: var(--surface); }
@@ -575,6 +685,7 @@ body.presenting {
 body.presenting .nav,
 body.presenting .foot,
 body.presenting .slide--docs,
+body.presenting .band,
 body.presenting .hero-scroll { display: none !important; }
 
 body.presenting main,

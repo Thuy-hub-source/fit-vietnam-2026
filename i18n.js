@@ -23,6 +23,10 @@ window.I18N = {
       modes: ["Off-the-shelf.", "Co-designed.", "Or white-labelled."],
       scroll: "Learn more",
     },
+    band: {
+      eyebrow: "Our method",
+      lede: "One touch point. Many pathways. We connect learners, trainers and evidence in a single, quiet system.",
+    },
     what: {
       eyebrow: "What we do",
       titleA: "Three services.",
@@ -62,10 +66,9 @@ window.I18N = {
       quote: "High-quality work — well-organized and engaging deliverables that sparked significant interest among colleagues.",
       cite: "LKDF, UNIDO",
       cases: [
-        { h: "Sustainability skills — Kenya Dairies (2026)", p: "UNIDO LKDF Skills Accelerator pilot with Kenya Dairies; adaptable across regions and sectors." },
-        { h: "Inclusive transport — CMRL, India (2026)", p: "ADB Inclusive Transport Challenge: BraillePath metro-navigation pilot with Nethrodaya." },
-        { h: "Global leadership — Legend Biotech", p: "People-manager pathways with cases, assessments and facilitator guidance across EU, USA and China." },
-        { h: "Safety at scale — Ineos / Praxis", p: "Safety learning for 3,000+ employees across BE/FR/UK; supporting certification and compliance." },
+        { img: "images/case-lkdf.jpg", h: "UNIDO LKDF — Sustainability skills", p: "46 sustainability modules with Train-the-Trainer for TVET students and agro-processing SMEs. Scalable across regions and sectors." },
+        { img: "images/case-eatg.png", h: "EATG — STEP-UP MOOC", p: "24 online modules on HIV prevention, localised EN & RU with dedicated Ukrainian access. Reaching thousands of activists and healthcare professionals across Europe and Southeast Asia." },
+        { img: "images/case-legend.jpg", h: "Legend Biotech — Legendary Manager Program", p: "8-module people-manager pathway delivered across USA, Europe and China. Facilitator guides for HRBPs and L&D, participant handouts, certificates and invitations." },
       ],
     },
     partners: {
@@ -154,6 +157,10 @@ window.I18N = {
       modes: ["Có sẵn.", "Đồng thiết kế.", "Hoặc gắn thương hiệu riêng."],
       scroll: "Tìm hiểu thêm",
     },
+    band: {
+      eyebrow: "Phương pháp của chúng tôi",
+      lede: "Một điểm tiếp xúc. Nhiều lộ trình. Chúng tôi kết nối học viên, giảng viên và bằng chứng trong một hệ thống duy nhất và nhẹ nhàng.",
+    },
     what: {
       eyebrow: "Chúng tôi làm gì",
       titleA: "Ba dịch vụ.",
@@ -193,10 +200,9 @@ window.I18N = {
       quote: "Chất lượng cao — sản phẩm bàn giao được tổ chức tốt và hấp dẫn, thu hút sự quan tâm đáng kể từ đồng nghiệp.",
       cite: "LKDF, UNIDO",
       cases: [
-        { h: "Kỹ năng bền vững — Kenya Dairies (2026)", p: "Thí điểm Skills Accelerator của UNIDO LKDF cùng Kenya Dairies; có thể nhân rộng cho các khu vực và ngành khác." },
-        { h: "Giao thông toàn diện — CMRL, Ấn Độ (2026)", p: "ADB Inclusive Transport Challenge: thí điểm BraillePath dẫn đường tàu điện ngầm cùng Nethrodaya." },
-        { h: "Lãnh đạo toàn cầu — Legend Biotech", p: "Lộ trình cho quản lý con người với tình huống, đánh giá và hướng dẫn giảng viên tại EU, Mỹ và Trung Quốc." },
-        { h: "An toàn ở quy mô lớn — Ineos / Praxis", p: "Đào tạo an toàn cho hơn 3.000 nhân viên tại BE/FR/UK; hỗ trợ chứng nhận và tuân thủ." },
+        { img: "images/case-lkdf.jpg", h: "UNIDO LKDF — Kỹ năng bền vững", p: "46 mô-đun về tính bền vững kèm đào tạo giảng viên nguồn cho học viên TVET và doanh nghiệp chế biến nông sản. Có thể nhân rộng cho nhiều khu vực và ngành." },
+        { img: "images/case-eatg.png", h: "EATG — STEP-UP MOOC", p: "24 mô-đun trực tuyến về phòng chống HIV, bản địa hoá EN & RU và có quyền truy cập riêng cho tiếng Ukraina. Tiếp cận hàng ngàn nhà hoạt động và chuyên gia y tế tại Châu Âu và Đông Nam Á." },
+        { img: "images/case-legend.jpg", h: "Legend Biotech — Legendary Manager Program", p: "Lộ trình 8 mô-đun cho quản lý con người triển khai tại Mỹ, Châu Âu và Trung Quốc. Hướng dẫn giảng viên cho HRBP và L&D, tài liệu học viên, chứng chỉ và thư mời." },
       ],
     },
     partners: {

@@ -101,7 +101,12 @@
     // Cases
     const cg = $("#caseGrid");
     cg.innerHTML = t.proof.cases
-      .map((c) => `<div class="case reveal"><h4>${c.h}</h4><p>${c.p}</p></div>`)
+      .map((c) => {
+        const media = c.img
+          ? `<div class="case__media"><img src="${c.img}" alt="" loading="lazy" /></div>`
+          : "";
+        return `<article class="case case--rich reveal">${media}<div class="case__body"><h4>${c.h}</h4><p>${c.p}</p></div></article>`;
+      })
       .join("");
 
     // Partner grid
